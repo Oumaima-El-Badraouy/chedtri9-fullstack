@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Menu, X, User, LogOut, Car, Calendar, Settings } from 'lucide-react';
+import { Menu, X, User, LogOut } from 'lucide-react';
 
 const Header = () => {
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
@@ -18,24 +18,34 @@ const Header = () => {
 
           {/* Navigation Desktop */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link to="/cars" className="text-gray-700 hover:text-primary-600 transition-colors">
-              Voitures
-            </Link>
-            
+            {/* 👇 نعرض "Voitures" فقط إذا ماشي Admin */}
+            {!isAdmin() && (
+              <Link to="/cars" className="text-gray-700 hover:text-primary-600 transition-colors">
+                Voitures
+              </Link>
+            )}
+
             {isAuthenticated() ? (
               <>
-                <Link to="/my-reservations" className="text-gray-700 hover:text-primary-600 transition-colors">
-                  Mes Réservations
-                </Link>
+                {/* 👇 نعرض "Mes Réservations" فقط إذا ماشي Admin */}
+                {!isAdmin() && (
+                  <Link to="/my-reservations" className="text-gray-700 hover:text-primary-600 transition-colors">
+                    Mes Réservations
+                  </Link>
+                )}
+
+                {/* 👇 هذا يظهر فقط للإدمن */}
                 {isAdmin() && (
                   <Link to="/admin" className="text-gray-700 hover:text-primary-600 transition-colors">
                     Administration
                   </Link>
                 )}
+
                 <Link to="/dashboard" className="text-gray-700 hover:text-primary-600 transition-colors flex items-center">
                   <User className="w-4 h-4 mr-1" />
                   {user?.name}
                 </Link>
+
                 <button
                   onClick={logout}
                   className="flex items-center text-gray-700 hover:text-red-600 transition-colors"
@@ -68,23 +78,29 @@ const Header = () => {
         {/* Menu Mobile Dropdown */}
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-4 space-y-3">
-            <Link
-              to="/cars"
-              className="block text-gray-700 hover:text-primary-600 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Voitures
-            </Link>
-            
+            {/* 👇 نفس الشيء هنا */}
+            {!isAdmin() && (
+              <Link
+                to="/cars"
+                className="block text-gray-700 hover:text-primary-600 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Voitures
+              </Link>
+            )}
+
             {isAuthenticated() ? (
               <>
-                <Link
-                  to="/my-reservations"
-                  className="block text-gray-700 hover:text-primary-600 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Mes Réservations
-                </Link>
+                {!isAdmin() && (
+                  <Link
+                    to="/my-reservations"
+                    className="block text-gray-700 hover:text-primary-600 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Mes Réservations
+                  </Link>
+                )}
+
                 {isAdmin() && (
                   <Link
                     to="/admin"
@@ -94,6 +110,7 @@ const Header = () => {
                     Administration
                   </Link>
                 )}
+
                 <Link
                   to="/dashboard"
                   className="block text-gray-700 hover:text-primary-600 transition-colors"
@@ -101,6 +118,7 @@ const Header = () => {
                 >
                   Mon Profil
                 </Link>
+
                 <button
                   onClick={() => {
                     logout();
